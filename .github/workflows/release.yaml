@@ -35,6 +35,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.determine_tag.outputs.tag }}
-          files: ipoc-fileupl-urlcreator-linux-amd64.zip
+          files: url-creator/ipoc-fileupl-urlcreator-linux-amd64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
