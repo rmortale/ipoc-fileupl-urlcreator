@@ -1,0 +1,40 @@
+on:
+  push:
+
+name: Build Release
+
+jobs:
+  release-linux-amd64:
+    name: release linux/amd64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "^1.13" # The Go version to download (if necessary) and use.
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+
+      - name: Build and package
+        run: |
+          cd url-creator
+          GOOS=linux GOARCH=amd64 go test
+          GOOS=linux GOARCH=amd64 go build
+          zip --junk-paths ipoc-fileupl-urlcreator-linux-amd64.zip urlcreator
+          ls -la
+
+      - name: Determine the next version tagging the branch
+        id: determine_tag
+        uses: anothrNick/github-tag-action@1.17.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.determine_tag.outputs.tag }}
+          files: ipoc-fileupl-urlcreator-linux-amd64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
